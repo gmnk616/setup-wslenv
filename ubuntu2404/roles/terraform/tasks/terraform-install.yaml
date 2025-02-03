@@ -1,0 +1,32 @@
+---
+# 事前にgit configの設定が必要
+- name: terraform git clone
+  ansible.builtin.git:
+    repo: https://github.com/tfutils/tfenv.git
+    dest: "{{ ansible_env.HOME }}/.tfenv"
+
+- name: terraform link terraform
+  ansible.builtin.file:
+    src: "{{ ansible_env.HOME }}/.tfenv/bin/terraform"
+    dest: /usr/bin/terraform
+    state: link
+  become: yes
+
+- name: terraform link tfenv
+  ansible.builtin.file:
+    src: "{{ ansible_env.HOME }}/.tfenv/bin/tfenv"
+    dest: /usr/bin/tfenv
+    state: link
+  become: yes
+
+# tfenvでterraformをインストール
+- name: terraform install
+  ansible.builtin.shell:
+    cmd: |
+      tfenv install {{ terraform_ver }}
+
+# 使用するterraformのバージョンを指定
+- name: terraform use
+  ansible.builtin.shell:
+    cmd: |
+      tfenv use {{ terraform_ver }}

@@ -1,0 +1,27 @@
+---
+
+# portainerが起動してるかチェック
+# `failed_when`を入れないとシェルの結果が失敗時にansibleが終了してしまう
+- name: portainer run check.
+  ansible.builtin.shell:
+    cmd: |
+      sudo docker ps | grep portainer_goma
+  register: result
+  failed_when: result.rc not in [0,1]
+
+# portainerが未起動は以下シェルを実行
+# `--admin-password`の値は以下コマンドで取得(なお実施の度に、異なる値が出力される)
+# docker run --rm httpd:2.4-alpine htpasswd -nbB admin 'passwordgoma' | cut -d ":" -f 2
+- name: portainer run.
+  ansible.builtin.shell:
+    cmd: |
+      sudo docker run \
+      -d \
+      -p 9999:9000 \
+      --name portainer_goma \
+      --restart always \
+      -v /var/run/docker.sock:/var/run/docker.sock \
+      -v portainer_data:/data \
+      portainer/portainer-ce \
+      --admin-password='$2y$05$hc0a5XDcQpB0HsfzaYj2EuZZjG0KDBvPyiZo.YM8f.5BHOpBRgoaa'
+  when: result.rc == 1

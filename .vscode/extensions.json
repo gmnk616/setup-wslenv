@@ -1,0 +1,47 @@
+{
+    // `@recommended`で表示される推奨事項
+    "recommendations": [
+        // EditorConfig for VS Code
+        "editorconfig.editorconfig",
+        // Git History
+        "donjayamanne.githistory",
+        // GitLens — Git supercharged
+        "eamodio.gitlens",
+        // Git Graph
+        "mhutchie.git-graph",
+        // indent-rainbow
+        "oderwat.indent-rainbow",
+        // npm Intellisense
+        "christian-kohler.npm-intellisense",
+        // Regex Previewer
+        "chrmarti.regex",
+        // IntelliCode
+        "visualstudioexptteam.vscodeintellicode",
+        // Markdown All in One
+        "yzhang.markdown-all-in-one",
+        // Markdown Preview Enhanced
+        "shd101wyy.markdown-preview-enhanced",
+        // markdownlint
+        "DavidAnson.vscode-markdownlint",
+        // filesize
+        "mkxml.vscode-filesize",
+        // Todo Tree
+        "Gruntfuggly.todo-tree",
+        // Docker
+        "ms-azuretools.vscode-docker",
+        // zenkaku
+        "mosapride.zenkaku",
+        // XML Tools
+        "DotJoshJohnson.xml",
+        // Path Intellisense
+        "christian-kohler.path-intellisense",
+        // Path Autocomplete
+        "ionutvmi.path-autocomplete",
+        // Code Spell Checker
+        "streetsidesoftware.code-spell-checker",
+        // Luna Paint — Image Editor
+        "Tyriar.luna-paint",
+        // Rainbow CSV
+        "mechatroner.rainbow-csv",
+    ]
+}

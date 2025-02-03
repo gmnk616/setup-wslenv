@@ -1,0 +1,23 @@
+---
+
+# git最新版インストールのため、一旦削除
+- name: Uninstall git.
+  ansible.builtin.apt:
+    name: git
+    state: absent
+  become: yes
+
+# git最新版インストールに必要
+- name: add-apt-repository ppa:git-core/ppa.
+  ansible.builtin.apt_repository:
+    repo: ppa:git-core/ppa
+    # TODO: このオプションはfalseにするか？
+    validate_certs: false
+  become: yes
+
+# git最新版インストール
+- name: install git.
+  ansible.builtin.apt:
+    name: git
+    state: latest
+  become: yes

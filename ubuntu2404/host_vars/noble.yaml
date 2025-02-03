@@ -1,0 +1,16 @@
+---
+
+common:
+  packages:
+    - make
+    # portainerの起動に必要
+    - golang-docker-credential-helpers
+    # - git
+    - vim
+    - tree
+    - jq
+    - nkf
+    - zip
+    - unzip
+    # wsl上でdocker login する際に、secretsエラーを抑制するのに使用
+    - gnome-keyring

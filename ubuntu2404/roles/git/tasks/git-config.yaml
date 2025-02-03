@@ -1,0 +1,27 @@
+---
+
+# globalを指定するとrootユーザーの`.gitconfig`に設定するため、scopeにfileを指定して実行
+- name: git config
+  community.general.git_config:
+    scope: file
+    file: "{{ ansible_env.HOME }}/.gitconfig"
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+  loop:
+    # プロキシは不要
+    # - name: http.proxy
+    #   value: "{{ proxy_value }}"
+    # - name: https.proxy
+    #   value: "{{ proxy_value }}"
+    # gitの脆弱性対策ですが、開発環境ではoffにしてます
+    - name: safe.directory
+      value: "*"
+    # 初回時以降はユーザー名とパスワードの入力が省略されます(gitlab等)
+    - name: credential.helper
+      value: store
+    # `git tree`エイリアスを追加
+    - name: alias.tree
+      value: log --graph --all --pretty=format:'%x09%C(auto) %h %Cgreen %ar %Creset%x09by"%C(cyan ul)%an%Creset" %x09%C(auto)%s %d'
+    # デフォルトのブランチ名を`main`に変更
+    - name: init.defaultBranch
+      value: main

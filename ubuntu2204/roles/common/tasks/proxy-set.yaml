@@ -1,0 +1,27 @@
+---
+
+- name: apt-get proxy set.
+  ansible.builtin.template:
+    src: apt-get.j2
+    dest: /etc/apt/apt.conf.d/30proxy
+    owner: root
+    group: root
+    mode: 644
+  become: yes
+
+- name: curl proxy set.
+  ansible.builtin.blockinfile:
+    path: /etc/wgetrc
+    insertafter: EOF
+    block: |
+      http_proxy={{ proxy_value }}
+      https_proxy={{ proxy_value }}
+  become: yes
+
+- name: curl proxy set.
+  ansible.builtin.template:
+    src: curlrc.j2
+    dest: "{{ ansible_env.HOME }}/.curlrc"
+    owner: {{ ansible_env.USER }}
+    group: {{ ansible_env.USER }}
+    mode: 644

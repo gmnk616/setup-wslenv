@@ -1,0 +1,9 @@
+---
+
+- name: Change package archive repository to japanese server.
+  replace:
+    path: /etc/apt/sources.list
+    backup: yes
+    regexp: '\/archive\.ubuntu'
+    replace: '/jp.archive.ubuntu'
+  become: yes

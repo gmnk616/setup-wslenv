@@ -1,0 +1,7 @@
+---
+
+- ansible.builtin.import_tasks: docker-install.yaml
+  tags: docker-install
+
+- ansible.builtin.import_tasks: portainer-run.yaml
+  tags: portainer-run

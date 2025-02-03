@@ -1,0 +1,121 @@
+---
+
+# NOTE: dockerインストール手順は<https://docs.docker.com/engine/install/ubuntu/>を参考
+# apt updateを実行(1回目)
+- name: docker first apt update.
+  ansible.builtin.apt:
+    update_cache: yes
+  become: yes
+
+# dockerインストールに必要なパッケージをインストール
+- name: docker install package.
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+      - curl
+      - gnupg
+    state: present
+  become: yes
+
+# dockerリポジトリのGPGキーをシステムに追加
+- name: docker repository add gpg key.
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    dest: /etc/apt/keyrings/docker.asc
+    # TODO: このオプションはfalseにするか？
+    validate_certs: false
+    mode: '0644'
+    force: true
+  become: yes
+
+# dockerリポジトリをAPTソースに追加
+- name: docker repository add apt source.
+  ansible.builtin.apt_repository:
+    repo: deb [arch={{ deb_architecture[ansible_architecture] }} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
+    state: present
+  become: yes
+
+# apt updateを実行(2回目)
+- name: docker second apt update.
+  ansible.builtin.apt:
+    update_cache: yes
+  become: yes
+
+# dockerをインストール
+# `sudo apt-cache madison docker-ce`でdocker-ceのVerチェック
+# `sudo apt-cache madison containerd.io`でcontainerd.ioのVerチェック
+# `sudo apt-cache madison docker-buildx-plugin`でdocker-buildx-pluginのVerチェック
+# `sudo apt-cache madison docker-compose-plugin`でdocker-compose-pluginのVerチェック
+- name: docker install.
+  ansible.builtin.apt:
+    name:
+      # - docker-ce
+      # - docker-ce-cli
+      # - containerd.io
+      # - docker-buildx-plugin
+      # - docker-compose-plugin
+      - docker-ce=5:26.0.0-1~ubuntu.22.04~jammy
+      - docker-ce-cli=5:26.0.0-1~ubuntu.22.04~jammy
+      - containerd.io=1.6.28-2
+      - docker-buildx-plugin=0.16.2-1~ubuntu.22.04~jammy
+      - docker-compose-plugin=2.29.1-1~ubuntu.22.04~jammy
+    state: fixed
+  become: yes
+
+- name: After installation start docker.
+  ansible.builtin.systemd:
+    name: docker
+    state: started
+  become: yes
+
+- name: After installation restart docker.
+  ansible.builtin.systemd:
+    name: docker
+    state: restarted
+  become: yes
+
+- name: docker daemon set.
+  ansible.builtin.template:
+    src: docker-daemon.j2
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: "0644"
+  become: yes
+
+# - name: create directory for http-proxy.conf.
+#   ansible.builtin.file:
+#     path: "/etc/systemd/system/docker.service.d/"
+#     state: directory
+#     owner: "root"
+#     group: "root"
+#     mode: "0644"
+# become: yes
+
+# - name: create file http-proxy.conf
+#   ansible.builtin.template:
+#     src: docker-proxy.j2
+#     dest: /etc/systemd/system/docker.service.d/http-proxy.conf
+#     owner: "root"
+#     group: "root"
+#     mode: "0644"
+# become: yes
+
+- name: settings daemon-reload.
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: yes
+
+- name: settings restart docker.
+  ansible.builtin.systemd:
+    name: docker
+    state: restarted
+  become: yes
+
+# ユーザーをdockerグループに追加(適用にはOS(`WSL`)の再起動が必要)
+- name: add user to docker group.
+  ansible.builtin.user:
+    name: "{{ ansible_env.USER }}"
+    groups: docker
+    append: yes
+  become: yes

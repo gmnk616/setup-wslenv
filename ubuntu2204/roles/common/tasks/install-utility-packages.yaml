@@ -1,0 +1,7 @@
+---
+
+- name: Install various utility packages.
+  apt:
+    name: "{{ common.packages }}"
+    state: present
+  become: yes

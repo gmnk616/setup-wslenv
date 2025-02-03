@@ -1,0 +1,7 @@
+---
+
+ansible_host: localhost
+ansible_connection: local
+# ansible-playbook の実行に使用されているPythonインタプリタを指定
+# NOTE: `/usr/bin/env python3`を指定するとansible-coreのverが`2.17.1`以降でエラーとなります。
+ansible_python_interpreter: '{{ ansible_playbook_python }}'

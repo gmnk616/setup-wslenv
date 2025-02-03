@@ -1,0 +1,4 @@
+---
+
+- ansible.builtin.import_tasks: change-root-password.yaml
+  tags: root-password

@@ -1,0 +1,67 @@
+---
+
+- name: Configure Ubuntu-24.04 LTS (Noble Numbat) settings for Windows Subsystem for Linux 2.
+  hosts: noble
+
+  vars:
+    # プロキシ設定
+    proxy_value: ""
+    # 
+    dns_01: 8.8.8.8
+    dns_02: 8.8.4.4
+    # terraformのVer(Ver1.6.0以降からライセンスがMPLからBSLに変更された為、ver1.6.0より前のverを指定してます)
+    terraform_ver: 1.5.7
+    # opentofuのVer
+    opentofu_ver: 1.8.2
+    # gitlabのdockerイメージ用のFQDN
+    gitlab_docker_fqdn: synology-server:5050
+    # dockerインストール用に定義
+    deb_architecture: {
+      "armv6l": "armhf",
+      "armv7l": "armhf",
+      "aarch64": "arm64",
+      "x86_64": "amd64",
+      "i386": "i386"
+    }
+
+  tasks:
+    # ansible_homeに実行ユーザーのホームディレクトリを設定
+    # `privilege_escalation`をfalseにしているため、現在未使用だが念のため残してる
+    # become: yes を利用すると{{ ansible_env.HOME }} が`root`の値となるため
+    # - name: Get ansible_user home directory
+    #   ansible.builtin.shell: 'getent passwd "{{ansible_env.SUDO_USER}}" | cut -d: -f6'
+    #   register: ansible_home_result
+    # - name: Set the fact for the other scripts to use
+    #   ansible.builtin.set_fact: ansible_home='{{ansible_home_result.stdout}}'
+
+    - ansible.builtin.import_role:
+        name: root
+      tags: root
+
+    - ansible.builtin.import_role:
+        name: user
+      tags: user
+
+    - ansible.builtin.import_role:
+        name: common
+      tags: common
+
+    - ansible.builtin.import_role:
+        name: git
+      tags: git
+
+    - ansible.builtin.import_role:
+        name: terraform
+      tags: terraform
+
+    - ansible.builtin.import_role:
+        name: opentofu
+      tags: opentofu
+
+    - ansible.builtin.import_role:
+        name: aws
+      tags: aws
+
+    - ansible.builtin.import_role:
+        name: docker
+      tags: docker

@@ -1,0 +1,8 @@
+- name: gnome-keyring-daemon set.
+  ansible.builtin.blockinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    insertafter: EOF
+    marker: '########## gnome-keyring-daemon {mark} ##########'
+    block: |
+      # `docker login`時のエラーを回避する為に追加しました。
+      echo "$PASS" | gnome-keyring-daemon --unlock --replace > /dev/null 2>&1
