@@ -1,0 +1,7 @@
+---
+
+- ansible.builtin.import_tasks: github-cli-install.yaml
+  tags: github-cli-install
+
+- ansible.builtin.import_tasks: bashrc-set.yaml
+  tags: bashrc-set

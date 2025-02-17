@@ -51,6 +51,10 @@
       tags: git
 
     - ansible.builtin.import_role:
+        name: github
+      tags: github
+
+    - ansible.builtin.import_role:
         name: terraform
       tags: terraform
 

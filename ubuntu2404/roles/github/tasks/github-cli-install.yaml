@@ -1,0 +1,36 @@
+---
+
+# NOTE: github CLIのインストール手順は<https://github.com/cli/cli/blob/trunk/docs/install_linux.md>を参考
+
+# github-cliリポジトリのGPGキーをシステムに追加
+- name: github-cli repository add gpg key.
+  ansible.builtin.get_url:
+    url: https://cli.github.com/packages/githubcli-archive-keyring.gpg
+    dest: /etc/apt/keyrings/githubcli-archive-keyring.gpg
+    # TODO: このオプションはfalseでセット(もしtrueでも問題なければtrueにする予定です)
+    validate_certs: false
+    mode: '0644'
+    force: true
+  become: yes
+
+# github-cliリポジトリをAPTソースに追加
+- name: github-cli repository add apt source.
+  ansible.builtin.apt_repository:
+    repo: deb [arch={{ deb_architecture[ansible_architecture] }} signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main
+    filename: github-cli
+    state: present
+  become: yes
+
+# apt updateを実行
+- name: github-cli first apt update.
+  ansible.builtin.apt:
+    update_cache: yes
+  become: yes
+
+# github-cliをインストール
+- name: github-cli install.
+  ansible.builtin.apt:
+    name:
+      - gh
+    state: latest
+  become: yes
