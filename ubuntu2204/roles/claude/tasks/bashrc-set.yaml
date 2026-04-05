@@ -1,0 +1,8 @@
+---
+
+# .bashrcに$HOME/.local/binのPATHを追加
+- name: Claude CLI add PATH to .bashrc.
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    line: 'export PATH="$HOME/.local/bin:$PATH"'
+    state: present

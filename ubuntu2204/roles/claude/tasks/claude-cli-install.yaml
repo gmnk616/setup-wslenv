@@ -1,0 +1,9 @@
+---
+
+# NOTE: Claude CLIのインストール手順は<https://claude.ai/install.sh>を参考
+
+# Claude CLIをインストール
+- name: Claude CLI install.
+  ansible.builtin.shell: curl -fsSL https://claude.ai/install.sh | bash
+  args:
+    creates: "{{ ansible_env.HOME }}/.local/bin/claude"

@@ -55,6 +55,10 @@
       tags: github
 
     - ansible.builtin.import_role:
+        name: claude
+      tags: claude
+
+    - ansible.builtin.import_role:
         name: terraform
       tags: terraform
 
