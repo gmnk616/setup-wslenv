@@ -4,7 +4,7 @@
 - name: git config
   community.general.git_config:
     scope: file
-    file: "{{ ansible_env.HOME }}/.gitconfig"
+    file: "{{ ansible_facts['env']['HOME'] }}/.gitconfig"
     name: "{{ item.name }}"
     value: "{{ item.value }}"
   loop:

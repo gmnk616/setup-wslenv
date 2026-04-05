@@ -21,7 +21,7 @@
 - name: curl proxy set.
   ansible.builtin.template:
     src: curlrc.j2
-    dest: "{{ ansible_env.HOME }}/.curlrc"
-    owner: {{ ansible_env.USER }}
-    group: {{ ansible_env.USER }}
+    dest: "{{ ansible_facts['env']['HOME'] }}/.curlrc"
+    owner: "{{ ansible_facts['env']['USER'] }}"
+    group: "{{ ansible_facts['env']['USER'] }}"
     mode: 644

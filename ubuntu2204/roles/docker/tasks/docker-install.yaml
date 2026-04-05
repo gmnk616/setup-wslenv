@@ -31,7 +31,7 @@
 # dockerリポジトリをAPTソースに追加
 - name: docker repository add apt source.
   ansible.builtin.apt_repository:
-    repo: deb [arch={{ deb_architecture[ansible_architecture] }} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
+    repo: deb [arch={{ deb_architecture[ansible_facts['architecture']] }} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/{{ ansible_facts['system'] | lower }}/{{ ansible_facts['distribution'] | lower }} {{ ansible_facts['distribution_release'] }} stable
     state: present
   become: yes
 
@@ -115,7 +115,7 @@
 # ユーザーをdockerグループに追加(適用にはOS(`WSL`)の再起動が必要)
 - name: add user to docker group.
   ansible.builtin.user:
-    name: "{{ ansible_env.USER }}"
+    name: "{{ ansible_facts['env']['USER'] }}"
     groups: docker
     append: yes
   become: yes

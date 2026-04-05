@@ -2,7 +2,7 @@
 # コマンド補完の設定
 - name: github-cli gh completion set.
   ansible.builtin.blockinfile:
-    path: "{{ ansible_env.HOME }}/.bashrc"
+    path: "{{ ansible_facts['env']['HOME'] }}/.bashrc"
     insertafter: EOF
     marker: '########## github-cli gh completion set. {mark} ##########'
     block: |

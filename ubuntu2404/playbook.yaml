@@ -27,9 +27,9 @@
   tasks:
     # ansible_homeに実行ユーザーのホームディレクトリを設定
     # `privilege_escalation`をfalseにしているため、現在未使用だが念のため残してる
-    # become: yes を利用すると{{ ansible_env.HOME }} が`root`の値となるため
+    # become: yes を利用すると{{ ansible_facts['env']['HOME'] }} が`root`の値となるため
     # - name: Get ansible_user home directory
-    #   ansible.builtin.shell: 'getent passwd "{{ansible_env.SUDO_USER}}" | cut -d: -f6'
+    #   ansible.builtin.shell: 'getent passwd "{{ ansible_facts['env']['SUDO_USER'] }}" | cut -d: -f6'
     #   register: ansible_home_result
     # - name: Set the fact for the other scripts to use
     #   ansible.builtin.set_fact: ansible_home='{{ansible_home_result.stdout}}'

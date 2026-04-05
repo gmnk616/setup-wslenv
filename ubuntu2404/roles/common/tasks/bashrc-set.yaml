@@ -1,6 +1,6 @@
 - name: gnome-keyring-daemon set.
   ansible.builtin.blockinfile:
-    path: "{{ ansible_env.HOME }}/.bashrc"
+    path: "{{ ansible_facts['env']['HOME'] }}/.bashrc"
     insertafter: EOF
     marker: '########## gnome-keyring-daemon {mark} ##########'
     block: |
