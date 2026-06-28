@@ -43,6 +43,8 @@
     components: stable
     architectures: "{{ deb_architecture[ansible_facts['architecture']] }}"
     signed_by: /etc/apt/keyrings/docker.asc
+    # deb822_repository は python3-debian ライブラリを必要とするため自動インストールを許可
+    install_python_debian: true
     state: present
   become: yes
 

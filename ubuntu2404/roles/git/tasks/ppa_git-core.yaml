@@ -48,6 +48,8 @@
     suites: "{{ ansible_facts['distribution_release'] }}"
     components: main
     signed_by: /etc/apt/keyrings/git-core-ppa.asc
+    # deb822_repository は python3-debian ライブラリを必要とするため自動インストールを許可
+    install_python_debian: true
     state: present
   become: yes
 
