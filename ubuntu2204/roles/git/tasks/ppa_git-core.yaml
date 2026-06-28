@@ -8,11 +8,53 @@
   become: yes
 
 # git最新版インストールに必要
-- name: add-apt-repository ppa:git-core/ppa.
-  ansible.builtin.apt_repository:
-    repo: ppa:git-core/ppa
+# NOTE: 2026-06-28 ansible.builtin.apt_repository は非推奨(ansible-core 2.25で削除予定)で
+#       deprecation warning が出るため、後継の ansible.builtin.deb822_repository へ移行。
+#       apt_repository は `ppa:git-core/ppa` 短縮形を内部で自動展開(実URL解決とGPGキー取得)
+#       していたが、deb822_repository は PPA短縮形を解釈しないため、
+#       Launchpad上の実URLと署名鍵を明示的に指定する必要がある。
+#       - PPA実URL  : https://ppa.launchpadcontent.net/git-core/ppa/ubuntu
+#       - 署名鍵FP   : E1DD270288B4E6030699E45FA1715D88E1DF1F24 (git-core/ppa)
+#       また git ロールは github/docker より先に実行されるため、ここで keyrings 用
+#       ディレクトリも作成しておく(github/docker は本ディレクトリの存在を前提にしている)。
+
+# 署名鍵の配置先ディレクトリを作成
+- name: create /etc/apt/keyrings directory.
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  become: yes
+
+# git-core PPA の署名鍵をシステムに追加
+- name: git-core ppa add gpg key.
+  ansible.builtin.get_url:
+    url: https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xE1DD270288B4E6030699E45FA1715D88E1DF1F24
+    dest: /etc/apt/keyrings/git-core-ppa.asc
     # TODO: このオプションはfalseにするか？
     validate_certs: false
+    mode: '0644'
+    force: true
+  become: yes
+
+# git-core PPA をAPTソースに追加
+- name: add-apt-repository ppa:git-core/ppa.
+  ansible.builtin.deb822_repository:
+    name: git-core-ppa
+    types: deb
+    uris: https://ppa.launchpadcontent.net/git-core/ppa/ubuntu
+    suites: "{{ ansible_facts['distribution_release'] }}"
+    components: main
+    signed_by: /etc/apt/keyrings/git-core-ppa.asc
+    state: present
+  become: yes
+
+# PPA追加後にAPTキャッシュを更新
+- name: git-core ppa apt update.
+  ansible.builtin.apt:
+    update_cache: yes
   become: yes
 
 # git最新版インストール

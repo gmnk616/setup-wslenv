@@ -29,9 +29,20 @@
   become: yes
 
 # dockerリポジトリをAPTソースに追加
+# NOTE: 2026-06-28 ansible.builtin.apt_repository は非推奨(ansible-core 2.25で削除予定)で
+#       deprecation warning が出るため、後継の ansible.builtin.deb822_repository へ移行。
+#       旧記述: deb [arch=... signed-by=/etc/apt/keyrings/docker.asc]
+#               https://download.docker.com/linux/ubuntu <release> stable
+#       deb822形式 (/etc/apt/sources.list.d/docker.sources) で出力される。
 - name: docker repository add apt source.
-  ansible.builtin.apt_repository:
-    repo: deb [arch={{ deb_architecture[ansible_facts['architecture']] }} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/{{ ansible_facts['system'] | lower }}/{{ ansible_facts['distribution'] | lower }} {{ ansible_facts['distribution_release'] }} stable
+  ansible.builtin.deb822_repository:
+    name: docker
+    types: deb
+    uris: "https://download.docker.com/{{ ansible_facts['system'] | lower }}/{{ ansible_facts['distribution'] | lower }}"
+    suites: "{{ ansible_facts['distribution_release'] }}"
+    components: stable
+    architectures: "{{ deb_architecture[ansible_facts['architecture']] }}"
+    signed_by: /etc/apt/keyrings/docker.asc
     state: present
   become: yes
 

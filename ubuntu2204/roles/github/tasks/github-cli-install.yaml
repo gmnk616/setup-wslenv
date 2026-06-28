@@ -14,10 +14,20 @@
   become: yes
 
 # github-cliリポジトリをAPTソースに追加
+# NOTE: 2026-06-28 ansible.builtin.apt_repository は非推奨(ansible-core 2.25で削除予定)で
+#       deprecation warning が出るため、後継の ansible.builtin.deb822_repository へ移行。
+#       旧記述: deb [arch=... signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg]
+#               https://cli.github.com/packages stable main
+#       deb822形式 (/etc/apt/sources.list.d/github-cli.sources) で出力される。
 - name: github-cli repository add apt source.
-  ansible.builtin.apt_repository:
-    repo: deb [arch={{ deb_architecture[ansible_facts['architecture']] }} signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main
-    filename: github-cli
+  ansible.builtin.deb822_repository:
+    name: github-cli
+    types: deb
+    uris: https://cli.github.com/packages
+    suites: stable
+    components: main
+    architectures: "{{ deb_architecture[ansible_facts['architecture']] }}"
+    signed_by: /etc/apt/keyrings/githubcli-archive-keyring.gpg
     state: present
   become: yes
 
