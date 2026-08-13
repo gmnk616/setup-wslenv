@@ -1,0 +1,4 @@
+---
+
+- ansible.builtin.import_tasks: configure-sudo-for-working-users.yaml
+  tags: user-sudo

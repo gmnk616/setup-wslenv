@@ -1,0 +1,7 @@
+---
+
+- ansible.builtin.import_tasks: ppa_git-core.yaml
+  tags: ppa_git-core
+
+- ansible.builtin.import_tasks: git-config.yaml
+  tags: git-config

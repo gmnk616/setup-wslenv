@@ -1,0 +1,17 @@
+---
+
+# proxyセットは不要
+# - ansible.builtin.import_tasks: proxy-set.yaml
+#   tags: common-proxy-set
+
+- ansible.builtin.import_tasks: change-package-repository-to-japanese.yaml
+  tags: common-repo
+
+- ansible.builtin.import_tasks: update-all-packages.yaml
+  tags: common-update-all-packages
+
+- ansible.builtin.import_tasks: install-utility-packages.yaml
+  tags: common-install-utility-packages
+
+- ansible.builtin.import_tasks: bashrc-set.yaml
+  tags: common-bashrc-set

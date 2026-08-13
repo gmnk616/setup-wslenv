@@ -1,0 +1,30 @@
+---
+- name: opentofu.zip dl.
+  ansible.builtin.shell:
+    cmd: |
+      curl -L https://github.com/opentofu/opentofu/releases/download/v{{ opentofu_ver }}/tofu_{{ opentofu_ver }}_linux_amd64.zip \
+      -o /tmp/tofu_{{ opentofu_ver }}_linux_amd64.zip
+    # environment:
+    #   http_proxy: "{{ proxy_value }}"
+    #   https_proxy: "{{ proxy_value }}"
+
+- name: opentofu mkdir
+  ansible.builtin.shell:
+    cmd: |
+      mkdir -p /usr/local/tofu/{{ opentofu_ver }}
+  become: yes
+
+- name: opentofu.zip unzip
+  ansible.builtin.unarchive:
+    src: "/tmp/tofu_{{ opentofu_ver }}_linux_amd64.zip"
+    dest: /usr/local/tofu/{{ opentofu_ver }}
+  become: yes
+
+- name: opentofu create symbolic link
+  ansible.builtin.shell:
+    cmd: |
+      ln -fs /usr/local/tofu/{{ opentofu_ver }}/tofu /usr/local/bin/tofu
+  become: yes
+
+- name: opentofu.zip delete.
+  ansible.builtin.shell: "rm -rf /tmp/tofu_{{ opentofu_ver }}_linux_amd64.zip"

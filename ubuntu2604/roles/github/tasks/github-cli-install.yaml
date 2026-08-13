@@ -1,0 +1,48 @@
+---
+
+# NOTE: github CLIのインストール手順は<https://github.com/cli/cli/blob/trunk/docs/install_linux.md>を参考
+
+# github-cliリポジトリのGPGキーをシステムに追加
+- name: github-cli repository add gpg key.
+  ansible.builtin.get_url:
+    url: https://cli.github.com/packages/githubcli-archive-keyring.gpg
+    dest: /etc/apt/keyrings/githubcli-archive-keyring.gpg
+    # TODO: このオプションはfalseでセット(もしtrueでも問題なければtrueにする予定です)
+    validate_certs: false
+    mode: '0644'
+    force: true
+  become: yes
+
+# github-cliリポジトリをAPTソースに追加
+# NOTE: 2026-06-28 ansible.builtin.apt_repository は非推奨(ansible-core 2.25で削除予定)で
+#       deprecation warning が出るため、後継の ansible.builtin.deb822_repository へ移行。
+#       旧記述: deb [arch=... signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg]
+#               https://cli.github.com/packages stable main
+#       deb822形式 (/etc/apt/sources.list.d/github-cli.sources) で出力される。
+- name: github-cli repository add apt source.
+  ansible.builtin.deb822_repository:
+    name: github-cli
+    types: deb
+    uris: https://cli.github.com/packages
+    suites: stable
+    components: main
+    architectures: "{{ deb_architecture[ansible_facts['architecture']] }}"
+    signed_by: /etc/apt/keyrings/githubcli-archive-keyring.gpg
+    # deb822_repository は python3-debian ライブラリを必要とするため自動インストールを許可
+    install_python_debian: true
+    state: present
+  become: yes
+
+# apt updateを実行
+- name: github-cli first apt update.
+  ansible.builtin.apt:
+    update_cache: yes
+  become: yes
+
+# github-cliをインストール
+- name: github-cli install.
+  ansible.builtin.apt:
+    name:
+      - gh
+    state: latest
+  become: yes

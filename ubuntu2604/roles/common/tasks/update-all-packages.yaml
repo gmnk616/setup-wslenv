@@ -1,0 +1,11 @@
+---
+
+- name: Update all packages.
+  apt:
+    # name: '*'
+    # state: latest
+    update_cache: yes
+    # `upgrade`を有効にするとVer指定してるdockerのバージョンが変更されるのでコメントアウト
+    # upgrade: yes
+    # cache_valid_time: 3600
+  become: yes
