@@ -14,9 +14,15 @@
 #       していたが、deb822_repository は PPA短縮形を解釈しないため、
 #       Launchpad上の実URLと署名鍵を明示的に指定する必要がある。
 #       - PPA実URL  : https://ppa.launchpadcontent.net/git-core/ppa/ubuntu
-#       - 署名鍵FP   : E1DD270288B4E6030699E45FA1715D88E1DF1F24 (git-core/ppa)
+#       - 署名鍵FP   : F911AB184317630C59970973E363C90F8F1B6217 (git-core/ppa, rsa4096)
 #       また git ロールは github/docker より先に実行されるため、ここで keyrings 用
 #       ディレクトリも作成しておく(github/docker は本ディレクトリの存在を前提にしている)。
+#
+# NOTE: git-core/ppa は rsa1024(E1DD270288B4E6030699E45FA1715D88E1DF1F24, 2009年作成)と
+#       rsa4096(F911AB184317630C59970973E363C90F8F1B6217, 2024年作成)の2鍵でデュアル署名
+#       されているが、Ubuntu 26.04のapt/gnupgはrsa1024を弱鍵として拒否し
+#       "OpenPGP signature verification failed"でapt updateが失敗する。
+#       そのためrsa4096の鍵を使用する。
 
 # 署名鍵の配置先ディレクトリを作成
 - name: create /etc/apt/keyrings directory.
@@ -31,7 +37,7 @@
 # git-core PPA の署名鍵をシステムに追加
 - name: git-core ppa add gpg key.
   ansible.builtin.get_url:
-    url: https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xE1DD270288B4E6030699E45FA1715D88E1DF1F24
+    url: https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xF911AB184317630C59970973E363C90F8F1B6217
     dest: /etc/apt/keyrings/git-core-ppa.asc
     # TODO: このオプションはfalseにするか？
     validate_certs: false
